@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>חדר בריחה וירטואלי – יום השפה העברית</title>
+<style>
+  :root{
+    --bg1:#ffecd2;
+    --bg2:#fcb69f;
+    --bg3:#a1c4fd;
+    --bg4:#c2e9fb;
+    --card:#ffffffd9;
+    --ink:#13213c;
+    --muted:#4b5b78;
+    --accent:#6b5cff;
+    --good:#16a34a;
+    --bad:#dc2626;
+    --shadow: 0 12px 30px rgba(0,0,0,.12);
+    --radius: 18px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1000px 600px at 15% 10%, var(--bg3), transparent 60%),
+      radial-gradient(900px 520px at 85% 15%, var(--bg2), transparent 55%),
+      radial-gradient(900px 520px at 15% 85%, var(--bg4), transparent 55%),
+      linear-gradient(135deg, var(--bg1), #fff 35%, #fff 65%, var(--bg2));
+    min-height:100vh;
+  }
+  .wrap{max-width:980px; margin:0 auto; padding:18px 14px 40px;}
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-bottom:12px;
+  }
+  .badge{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:10px 12px; border-radius:999px;
+    background:rgba(255,255,255,.65);
+    border:1px solid rgba(19,33,60,.10);
+    box-shadow: 0 6px 18px rgba(0,0,0,.08);
+    backdrop-filter: blur(6px);
+    font-weight:700;
+  }
+  .badge small{font-weight:600; color:var(--muted)}
+  .pillbtn{
+    border:1px solid rgba(19,33,60,.14);
+    background:rgba(255,255,255,.75);
+    color:var(--ink);
+    padding:10px 12px;
+    border-radius:999px;
+    cursor:pointer;
+    font-weight:700;
+    box-shadow: 0 8px 18px rgba(0,0,0,.08);
+  }
+  .pillbtn:hover{transform: translateY(-1px);}
+  .card{
+    background:var(--card);
+    border:1px solid rgba(19,33,60,.10);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .header{
+    padding:18px 18px 10px;
+  }
+  .title{
+    font-size: 22px;
+    margin:0 0 6px;
+    letter-spacing:.2px;
+  }
+  .subtitle{
+    margin:0;
+    color:var(--muted);
+    line-height:1.6;
+  }
+  .progress{
+    height:10px;
+    background: rgba(19,33,60,.08);
+    border-radius:999px;
+    overflow:hidden;
+    margin-top:12px;
+  }
+  .progress > div{
+    height:100%;
+    width:0%;
+    background: linear-gradient(90deg, #22c55e, #3b82f6, #a855f7);
+    border-radius:999px;
+    transition: width .35s ease;
+  }
+  .main{
+    padding: 0 18px 18px;
+  }
+  .panel{
+    background: rgba(255,255,255,.78);
+    border:1px dashed rgba(19,33,60,.22);
+    border-radius: 16px;
+    padding:14px;
+    margin-top:12px;
+  }
+  .panel .kicker{
+    font-weight:800; letter-spacing:.3px;
+    display:flex; align-items:center; gap:8px;
+    margin-bottom:8px;
+  }
+  .panel .kicker span{
+    display:inline-flex; width:28px; height:28px; border-radius:10px;
+    align-items:center; justify-content:center;
+    background: rgba(107,92,255,.14);
+    border: 1px solid rgba(107,92,255,.25);
+  }
+  .panel .content{line-height:1.8}
+  .grid2{display:grid; grid-template-columns:1fr; gap:12px;}
+  @media(min-width:860px){ .grid2{ grid-template-columns: 1.2fr .8fr; } }
+  .inputrow{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:12px;}
+  .inputrow input{
+    flex:1 1 260px;
+    padding:12px 12px;
+    border-radius: 14px;
+    border:1px solid rgba(19,33,60,.18);
+    font-size:16px;
+    outline:none;
+    background: rgba(255,255,255,.9);
+  }
+  .btn{
+    border:0;
+    padding:12px 14px;
+    border-radius: 14px;
+    cursor:pointer;
+    font-weight:800;
+    box-shadow: 0 10px 24px rgba(0,0,0,.10);
+  }
+  .btn.primary{ background: linear-gradient(135deg, #6b5cff, #3b82f6); color:#fff;}
+  .btn.secondary{ background: rgba(19,33,60,.07); color:var(--ink); border:1px solid rgba(19,33,60,.14);}
+  .btn.good{ background: linear-gradient(135deg, #16a34a, #22c55e); color:#fff;}
+  .btn.warn{ background: linear-gradient(135deg, #f97316, #fb7185); color:#fff;}
+  .btn:active{ transform: translateY(1px); }
+  .hintbox{
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,.78);
+    border: 1px solid rgba(19,33,60,.14);
+    color: var(--muted);
+    line-height:1.65;
+  }
+  .status{
+    margin-top:10px;
+    font-weight:800;
+  }
+  .status.ok{ color: var(--good); }
+  .status.no{ color: var(--bad); }
+  .timer{
+    font-variant-numeric: tabular-nums;
+  }
+  /* modal */
+  .modalOverlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,.45);
+    display:none; align-items:center; justify-content:center;
+    padding:16px;
+    z-index:50;
+  }
+  .modal{
+    max-width: 820px;
+    width:100%;
+    background: rgba(255,255,255,.94);
+    border:1px solid rgba(19,33,60,.14);
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    overflow:hidden;
+  }
+  .modalHead{
+    padding:14px 16px;
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    background: linear-gradient(135deg, rgba(107,92,255,.16), rgba(59,130,246,.12));
+    border-bottom:1px solid rgba(19,33,60,.12);
+  }
+  .modalHead h3{margin:0; font-size:18px}
+  .modalBody{ padding:14px 16px 18px; line-height:1.75; color:var(--ink);}
+  .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+  .poster{
+    text-align:center;
+    padding:28px 18px 30px;
+    background:
+      radial-gradient(700px 420px at 20% 20%, rgba(34,197,94,.25), transparent 55%),
+      radial-gradient(700px 420px at 80% 25%, rgba(59,130,246,.25), transparent 55%),
+      radial-gradient(700px 420px at 35% 85%, rgba(168,85,247,.20), transparent 55%),
+      linear-gradient(135deg, #fff, rgba(255,255,255,.88));
+  }
+  .poster h1{margin:0 0 10px; font-size:34px;}
+  .poster .quote{
+    display:inline-block;
+    margin-top:10px;
+    padding:14px 16px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.85);
+    border: 1px solid rgba(19,33,60,.12);
+    box-shadow: 0 12px 30px rgba(0,0,0,.12);
+    font-size:22px;
+    font-weight:900;
+  }
+  .confetti{
+    font-size:26px;
+    letter-spacing: 6px;
+    margin: 6px 0 0;
+    opacity:.95;
+  }
+
+.pick{display:flex; gap:10px; align-items:flex-start; padding:10px 12px; border-radius:14px; border:1px solid rgba(40,0,60,.18); background: rgba(255,255,255,.55);}
+.pick input{margin-top:3px; transform: scale(1.1);} 
+.tag{font-size:.85rem; opacity:.75;}
+.codepill{padding:6px 12px; border-radius:999px; background: rgba(0,0,0,.06); border:1px dashed rgba(40,0,60,.25); font-weight:800; letter-spacing:.12em;}
+
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="badge">
+      🗝️ <span>חדר בריחה – שפת המקרא</span>
+      <small class="timer" id="timer">30:00</small>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+      <button class="pillbtn" id="btnTeacher">מפתח למורה</button>
+      <button class="pillbtn" id="btnRestart">התחלה מחדש</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="header">
+      <h2 class="title" id="stageTitle">ברוכים הבאים</h2>
+      <p class="subtitle" id="stageStory">
+        מצאתם בארכיון הדיגיטלי “כתב־יד” ישן. אבל הדפים נעולים. כדי לפתוח אותם צריך לפענח 8 שערים — בעזרת רמזים משפת המקרא.
+      </p>
+      <div class="progress"><div id="progressBar"></div></div>
+    </div>
+
+    <div class="main">
+      <div class="grid2">
+        <div>
+          <div class="panel">
+            <div class="kicker"><span>📜</span> מה עושים?</div>
+            <div class="content" id="artifact"></div>
+          </div>
+
+          <div class="panel">
+            <div class="kicker"><span>🔐</span> המנעול</div>
+            <div class="content">
+              <div id="question"></div>
+              <div class="inputrow">
+                <input id="answer" type="text" placeholder="כתבו את הקוד כאן…"/>
+                <button class="btn primary" id="btnCheck">בדיקה</button>
+                <button class="btn secondary" id="btnHint">רמז</button>
+              </div>
+              <div class="hintbox" id="hintBox" style="display:none"></div>
+              <div class="status" id="status"></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <div class="kicker"><span>🎯</span> כללים מהירים</div>
+            <div class="content" style="color:var(--muted)">
+              <ul style="margin:0; padding-right:18px; line-height:1.85">
+                <li>עובדים בקבוצה, קוראים בקול, מסמנים רמזים.</li>
+                <li>אם נתקעים – לוחצים “רמז” (עד 3 רמזים).</li>
+                <li>הקוד תמיד נובע מהפיצוח (לא צריך לנחש).</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="kicker"><span>🧩</span> התקדמות</div>
+            <div class="content" id="progressText" style="color:var(--muted)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- teacher modal -->
+<div class="modalOverlay" id="teacherOverlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modalHead">
+      <h3>מפתח למורה</h3>
+      <button class="pillbtn" id="btnCloseTeacher">סגירה</button>
+    </div>
+    <div class="modalBody" id="teacherBody"></div>
+  </div>
+</div>
+
+<script>
+/* ===== utilities ===== */
+const norm = (s) => (s ?? "")
+  .toString()
+  .trim()
+  .replace(/\u05B0|\u05B1|\u05B2|\u05B3|\u05B4|\u05B5|\u05B6|\u05B7|\u05B8|\u05B9|\u05BB|\u05BC|\u05BD|\u05BF|\u05C1|\u05C2|\u05C4|\u05C5|\u05C7/g, "")
+  .replace(/\s+/g, " ");
+
+function hash32(str){
+  let h = 5381;
+  for (let i=0;i<str.length;i++){ h = ((h<<5)+h) + str.charCodeAt(i); h |= 0; }
+  return h >>> 0;
+}
+
+/* ===== data ===== */
+const STAGES = [
+  {
+    id: 0,
+    title: "התחלה — כתב־היד נעול",
+    story: "אתם נכנסים לארכיון. על המסך מופיע: “כדי לפתוח את כתב־היד — פענחו 8 שערים של שפת המקרא.”",
+    artifactHtml: `
+      <div class="content">
+        <b>איך משחקים?</b><br/>
+        בכל שער תקבלו טקסט/חפץ/רמז. בסוף תכתבו <b>קוד</b> (מילה או מספר).<br/>
+        אם הקוד נכון — נפתח השער הבא.<br/><br/>
+        מוכנים? כתבו את המילה <span class="mono">מתחילים</span> כדי לפתוח את שער 1.
+      </div>
+    `,
+    questionHtml: `מה הקוד לפתיחה?`,
+    hints: [
+      "זה פשוט: הקלידו את המילה שמופיעה בהוראות (בלי ניקוד).",
+      "המילה היא בלשון רבים.",
+      "היא מתחילה באות מ׳."
+    ],
+    validate: (v) => norm(v) === "מתחילים",
+    teacherKey: "קוד: מתחילים"
+  },
+
+  {
+    id: 1,
+    title: "שער 1 — הגלובוס הכבול",
+    story: "על השולחן גלובוס ישן ועליו מילים ‘שהגיעו מבחוץ’. כדי לפתוח את המגירה צריך לזהות מאיזו מדינה/שפה הגיעה כל קבוצת מילים.",
+    artifactHtml: `
+      <div class="content">
+        <b>משימה</b><br/>
+        לכל קבוצה מצורפות מילים שאולות. כתבו מאיזו מדינה/שפה (ברמת מדינה) הגיעה כל קבוצה.<br/>
+        כתבו בפורמט: <b>1=..., 2=..., 3=..., 4=...</b><br/><br/>
+        <div style="background: rgba(255,255,255,.75); border:1px solid rgba(19,33,60,.14); padding:12px; border-radius:14px; line-height:1.75;">
+          <b>1.</b> ברוקולי, אקורדיון, פיצה, סלון, פשטידה<br/>
+          <b>2.</b> אוטובוס, טלוויזיה, לימוזינה, מגזין, קמפוס<br/>
+          <b>3.</b> אטלס, אצטדיון, דולפין, מגנט, היסטוריה<br/>
+          <b>4.</b> בנדנה, פיג׳מה, בלגן, גזוז, ג׳חנון
+        </div>
+        <div class="mini" style="margin-top:10px; color:var(--muted)">הקוד הוא <b>התשובה המלאה</b> בפורמט 1–4.</div>
+      </div>
+    `,
+    questionHtml: `כתבו את התשובה בפורמט <b>1=..., 2=..., 3=..., 4=...</b>`,
+    hints: [
+      "התחילו מקבוצה 3: הרבה מהמילים בה מוכרות משורשים יווניים (מדע/ספורט).",
+      "קבוצה 2 מזכירה תרבות/תחבורה אירופאית מודרנית (לא יוון).",
+      "הקפידו לכתוב גם את המספרים 1–4, זה חלק מהקוד."
+    ],
+    validate: (v) => {
+      const s = norm(v);
+      const ok1 = /(1\s*=?\s*(איטליה|איטלי))/i.test(s);
+      const ok2 = /(2\s*=?\s*(צרפת|צרפ))/i.test(s);
+      const ok3 = /(3\s*=?\s*(יוון|יוונ))/i.test(s);
+      const ok4 = /(4\s*=?\s*(פרס|איראן))/i.test(s);
+      return ok1 && ok2 && ok3 && ok4;
+    },
+    teacherKey: "נדרש: 1=איטליה, 2=צרפת, 3=יוון, 4=פרס/איראן"
+  },
+
+    {
+    id: 2,
+    title: "שער 2 — שעון החול (אמריקאי שיוצר קוד)",
+    story: "שעון החול מתחיל לרוץ. כדי לפתוח את המגירה עליכם לבחור את הפירוש הנכון לכל מילה. בכל בחירה יש ספרה — אספו את הספרות לפי הסדר ותקבלו קוד.",
+    artifactHtml: `
+      <div class="content">
+        <b>משימה</b><br/>
+        בכל שאלה בחרו את הפירוש הנכון. ליד כל אפשרות יש <b>ספרה</b>.<br/>
+        אחרי שסיימתם — כתבו (או העתיקו) את <b>4 הספרות</b> לפי הסדר לשדה הקוד.<br/><br/>
+
+        <div style="display:grid; gap:12px;">
+          <div style="background: rgba(255,255,255,.78); border:1px solid rgba(19,33,60,.14); padding:12px; border-radius:14px;">
+            <b>1) אשתקד</b><br/>
+            <label><input type="radio" name="mc2_q1" value="7"> (7) בשנה שעברה</label><br/>
+            <label><input type="radio" name="mc2_q1" value="2"> (2) בשנה הבאה</label><br/>
+            <label><input type="radio" name="mc2_q1" value="5"> (5) היום בבוקר</label>
+          </div>
+
+          <div style="background: rgba(255,255,255,.78); border:1px solid rgba(19,33,60,.14); padding:12px; border-radius:14px;">
+            <b>2) טרם</b><br/>
+            <label><input type="radio" name="mc2_q2" value="3"> (3) עדיין לא</label><br/>
+            <label><input type="radio" name="mc2_q2" value="8"> (8) כבר</label><br/>
+            <label><input type="radio" name="mc2_q2" value="1"> (1) מחר</label>
+          </div>
+
+          <div style="background: rgba(255,255,255,.78); border:1px solid rgba(19,33,60,.14); padding:12px; border-radius:14px;">
+            <b>3) לאלתר</b><br/>
+            <label><input type="radio" name="mc2_q3" value="9"> (9) מיד / בלי לחכות</label><br/>
+            <label><input type="radio" name="mc2_q3" value="4"> (4) פעם בשבוע</label><br/>
+            <label><input type="radio" name="mc2_q3" value="6"> (6) אולי אחר כך</label>
+          </div>
+
+          <div style="background: rgba(255,255,255,.78); border:1px solid rgba(19,33,60,.14); padding:12px; border-radius:14px;">
+            <b>4) לעת עתה</b><br/>
+            <label><input type="radio" name="mc2_q4" value="1"> (1) כרגע / בינתיים</label><br/>
+            <label><input type="radio" name="mc2_q4" value="0"> (0) לעולם לא</label><br/>
+            <label><input type="radio" name="mc2_q4" value="2"> (2) מזמן</label>
+          </div>
+        </div>
+
+        <div class="hintbox" style="margin-top:12px;">
+          <b>הקוד שלכם:</b> <span class="mono" id="mc2_code">—</span>
+          <div class="mini" style="margin-top:6px; color:var(--muted)">כשתבחרו בכל 4 השאלות, הקוד יתעדכן כאן. אפשר גם להעתיק אותו לשדה הקוד למטה.</div>
+        </div>
+      </div>
+    `,
+    questionHtml: `מה קוד 4 הספרות? (רק ספרות, בלי רווחים)`,
+    hints: [
+      "אשתקד קשורה למשהו שקרה <b>לפני</b> השנה הזו.",
+      "טרם = עדיין לא.",
+      "לעת עתה = נכון לעכשיו / בינתיים."
+    ],
+    validate: (v) => norm(v).replace(/\D/g,"") === "7391",
+    teacherKey: "תשובות: אשתקד=בשנה שעברה(7), טרם=עדיין לא(3), לאלתר=מיד(9), לעת עתה=כרגע(1) ⇒ קוד: 7391",
+    afterRender: () => {
+      const codeEl = document.getElementById("mc2_code");
+      const qnames = ["mc2_q1","mc2_q2","mc2_q3","mc2_q4"];
+      function update(){
+        const digits = qnames.map(n=>{
+          const sel = document.querySelector(`input[name="${n}"]:checked`);
+          return sel ? sel.value : "";
+        });
+        const ready = digits.every(d=>d!=="");
+        const code = digits.join("");
+        codeEl.textContent = ready ? code : "—";
+        if(ready){
+          // auto-fill the global answer box to reduce friction
+          const ans = document.getElementById("answer");
+          if(ans) ans.value = code;
+        }
+      }
+      qnames.forEach(n=>{
+        document.querySelectorAll(`input[name="${n}"]`).forEach(r=>{
+          r.addEventListener("change", update);
+        });
+      });
+      update();
+    }
+  },
+
+  {
+    id: 3,
+    title: "שער 3 — הטלפון המסתורי (שם המספר)",
+    story: "הטלפון מצלצל… על דף השיחה מופיעים משפטים. חלק נכון וחלק לא. עליכם לזהות בדיוק 4 משפטים שגויים בהתאמת שם המספר (זכר/נקבה) — והספרות שלהם יוצרות את הקוד.",
+    artifactHtml: `
+      <div class="content">
+        <b>מה עושים?</b><br/>
+        סמנו (✔) את <b>המשפטים השגויים בלבד</b>. יש בדיוק <b>4</b> כאלה.<br/>
+        בכל משפט יש ספרה בסוגריים. אחרי שתסמנו 4 שגויים — יופיע לכם <b>קוד בן 4 ספרות</b>.<br/><br/>
+
+        <div class="card" style="padding:14px;">
+          <div class="mini" style="margin-bottom:10px;">סמנו את המשפטים השגויים:</div>
+          <div id="g3_list" style="display:grid; gap:10px;">
+            <label class="pick"><input type="checkbox" data-digit="7"/> קניתי <b>שתי</b> מחברות חדשות. <span class="tag">(7)</span></label>
+            <label class="pick"><input type="checkbox" data-digit="4"/> הבאתי <b>שני</b> עפרונות מחודדים. <span class="tag">(4)</span></label>
+            <label class="pick"><input type="checkbox" data-digit="3"/> ראיתי <b>שלושה</b> בנות בחצר. <span class="tag">(3)</span></label>
+            <label class="pick"><input type="checkbox" data-digit="9"/> מצאנו <b>שלוש</b> אבנים נוצצות. <span class="tag">(9)</span></label>
+            <label class="pick"><input type="checkbox" data-digit="1"/> יש לי <b>חמש</b> מחברות בתיק. <span class="tag">(1)</span></label>
+            <label class="pick"><input type="checkbox" data-digit="6"/> עברו <b>עשרה</b> דקות בדיוק. <span class="tag">(6)</span></label>
+            <label class="pick"><input type="checkbox" data-digit="8"/> קיבלתי <b>שלושה</b> פרסים בתחרות. <span class="tag">(8)</span></label>
+            <label class="pick"><input type="checkbox" data-digit="2"/> קראנו <b>שלוש</b> ספרים מעניינים. <span class="tag">(2)</span></label>
+            <label class="pick"><input type="checkbox" data-digit="5"/> חיכיתי <b>שני</b> דקות בתחנה. <span class="tag">(5)</span></label>
+          </div>
+
+          <div style="display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap;">
+            <div class="mini">הקוד שלכם:</div>
+            <div id="g3_code" class="codepill">—</div>
+            <button type="button" class="btn small" id="g3_fill">הכנסי את הקוד לשדה</button>
+          </div>
+
+          <div class="mini" style="margin-top:10px; color:var(--muted)">
+            טיפ: בדקו את <b>שם העצם</b> (מחברות/בנות/אבנים/דקות). אם הוא נקבה — לרוב נשתמש בשתי/שלוש/עשר… אם הוא זכר — שני/שלושה/עשרה…
+          </div>
+        </div>
+      </div>
+    `,
+    questionHtml: `הדביקו כאן את הקוד (4 ספרות):`,
+    hints: [
+      "קודם מצאו את שם העצם (מחברות/עפרונות/בנות/דקות) — ורק אחר כך בדקו אם שם המספר מתאים לו.",
+      "יש בדיוק 4 משפטים שגויים. אם סימנתם יותר/פחות — בדקו שוב.",
+      "זכר: שני, שלושה, עשרה… | נקבה: שתי, שלוש, עשר…"
+    ],
+    init: () => {
+      const box = document.getElementById('g3_list');
+      const codeEl = document.getElementById('g3_code');
+      const fillBtn = document.getElementById('g3_fill');
+      const ans = document.getElementById('answer');
+      if(!box || !codeEl || !fillBtn) return;
+
+      const update = () => {
+        const picks = Array.from(box.querySelectorAll('input[type=checkbox]')).filter(x=>x.checked);
+        if(picks.length === 4){
+          const code = picks.map(x=>x.getAttribute('data-digit')).join('');
+          codeEl.textContent = code;
+        } else {
+          codeEl.textContent = '—';
+        }
+      };
+
+      box.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change', update));
+      fillBtn.addEventListener('click', () => {
+        const code = codeEl.textContent;
+        if(ans && code && code !== '—') ans.value = code;
+      });
+      update();
+    },
+    validate: (v) => norm(v).replace(/\D/g,"") === "3625",
+    teacherKey: "השגויים: 3) שלושה בנות (3), 6) עשרה דקות (6), 8) שלוש ספרים (2), 9) שני דקות (5) → קוד: 3625"
+  },
+
+
+  {
+    id: 4,
+
+    title: "שער 4 — משפחות מילים (השורש הסודי)",
+    story: "על השולחן פתק עם מילים מכל מיני שורשים. רק משפחה אחת היא ‘משפחת החיים וההחייאה’. מצאו את המילים של המשפחה — והשורש יפתח את השער.",
+    artifactHtml: `
+      <div class="content">
+        <b>מה עושים?</b><br/>
+        ברשימה יש מילים מכמה שורשים שונים.<br/>
+        <b>מצאו את המילים ששייכות למשפחה של: חיים / להחיות / תחייה / החייאה</b> (כלומר אותה משפחת שורש).<br/>
+        כשהבנתם איזו משפחה זו — כתבו את <b>השורש</b> (3 אותיות) בשדה הקוד.<br/><br/>
+
+        <div style="background: rgba(255,255,255,.78); border:1px solid rgba(33,60,60,.22); padding:12px; border-radius:14px; line-height:1.95;">
+          חיים · החייאה · תחייה · מחייה · יחיה · החיה ·<br/>
+          כתב · כתיבה · יכתוב · מכתב ·<br/>
+          אמר · אמירה · יאמר ·<br/>
+          הלך · הליכה · ילך
+        </div>
+
+        <div class="mini" style="margin-top:10px; color:var(--muted)">
+          רמז: השורש בדרך כלל 3 אותיות. כתבו אותו <b>בלי מקפים</b> ובלי רווחים.
+        </div>
+      </div>
+    `,
+    questionHtml: `מה השורש של משפחת "חיים/תחייה/החייאה"? (3 אותיות)`,
+    hints: [
+      "התמקדו רק במילים שקשורות ל’חיים’ ול’להחיות’ — מה חוזר בהן שוב ושוב?",
+      "התעלמו מהמילים של כתב/אמר/הלך — הן רק מסיחות.",
+      "אם אתם לא בטוחים: חפשו את שלוש האותיות שמופיעות ברוב המילים של המשפחה."
+    ],
+    validate: (v) => norm(v).replace(/\s+/g,"") === "חיה",
+    teacherKey: "המילים של המשפחה: חיים, החייאה, תחייה, מחייה, יחיה, החיה → השורש: חיה"
+  },
+
+  {
+    id: 5,
+    title: "שער 5 — דיוק בביטוי מקראי",
+    story: "בכתב־היד מצאתם מילים מפוזרות. כדי לפתוח את השער צריך לסדר אותן בדיוק כמו במקור.",
+    artifactHtml: `
+      <div class="content">
+        <b>מה עושים?</b><br/>
+        סידרו את המילים כך שיצא הביטוי המדויק.<br/>
+        כתבו את המשפט המלא בשדה הקוד.<br/><br/>
+        <div style="display:flex; flex-wrap:wrap; gap:10px;">
+          <span class="pill">ביד</span>
+          <span class="pill">הלשון</span>
+          <span class="pill">חיים</span>
+          <span class="pill">ומוות</span>
+        </div>
+        <div class="mini" style="margin-top:12px; color:var(--muted)">
+          חשוב: שימו לב לסדר המילים (זו בדיוק החידה).
+        </div>
+      </div>
+    `,
+    questionHtml: `מה המשפט המדויק?`,
+    hints: [
+      "זה ביטוי מספר משלי על כוח הדיבור.",
+      "המשפט מתחיל במילה 'חיים'.",
+      "הקפידו על המילה 'הלשון' בסוף."
+    ],
+    validate: (v) => norm(v).replace(/\s+/g," ") === "חיים ומוות ביד הלשון",
+    teacherKey: "התשובה: חיים ומוות ביד הלשון"
+  },
+
+  {
+    id: 6,
+    title: "שער 6 — הכרזה (מלחמת השפות)",
+    story: "מצאתם כרזה שמנסה לשכנע. כדי לפתוח את התיבה — צריך לזהות מה היא באמת מדגישה.",
+    artifactHtml: `
+      <div class="content">
+        <b>מה עושים?</b><br/>
+        קראו את הקטע. מתוך רשימת המילים בחרו את <b>3 המילים המרכזיות</b> שהכרזה מדגישה (כתבו אותן בשדה הקוד, מופרדות בפסיקים).<br/><br/>
+        <div style="background: rgba(255,255,255,.78); border:1px solid rgba(33,60,60,.22); padding:12px; border-radius:14px; line-height:1.85;">
+          “העברית היא זהות. בתי־הספר צריכים ללמד בעברית.  
+          ללמד בשפה זרה – זה פוגע בבניית העם בארץ.”
+        </div>
+        <div style="margin-top:10px; color:var(--muted)">
+          מילים לבחירה: עברית, זהות, בתי־הספר, רכבת, ים, כדורגל, בישול, ספרייה
+        </div>
+      </div>
+    `,
+    questionHtml: `כתבו את 3 המילים המרכזיות (מופרדות בפסיקים).`,
+    hints: [
+      "חשבו: מה הנושא של הכרזה? (לא מילות 'רעש' כמו ים/רכבת).",
+      "המילים המרכזיות קשורות לשפה ולחינוך.",
+      "אם אתם מתלבטים — חפשו מילים שמופיעות גם בתוך הקטע עצמו."
+    ],
+    validate: (v) => {
+      const s = norm(v).replace(/[\u05BE\-]/g," ");
+      const ok1 = s.includes("עברית");
+      const ok2 = s.includes("זהות");
+      const ok3 = s.includes("בתי הספר") || s.includes("בתי־הספר") || s.includes("בתי הספר");
+      return ok1 && ok2 && ok3;
+    },
+    teacherKey: "עברית, זהות, בתי־הספר"
+  },
+
+  {
+    id: 7,
+    title: "שער 7 — פענוח מספרי (קוד אמיתי)",
+    story: "על השולחן פתק: 'כאן מקודדים באותיות סידוריות'. רק אחרי שתפענחו — תדעו את המספר הנכון.",
+    artifactHtml: `
+      <div class="content">
+        <b>שלב א — פענוח</b><br/>
+        המספרים הם <b>מספר סידורי</b> של אות בא״ב (א=1, ב=2, ... ת=22).<br/>
+        פענחו את המילה: <b>4–16–22</b><br/><br/>
+
+        <div class="mini" style="background: rgba(255,255,255,.78); border:1px dashed rgba(33,60,60,.35); padding:10px; border-radius:14px; line-height:1.85;">
+          תזכורת: א1 ב2 ג3 ד4 ה5 ו6 ז7 ח8 ט9 י10 כ11 ל12 מ13 נ14 ס15 ע16 פ17 צ18 ק19 ר20 ש21 ת22
+        </div>
+
+        <br/><b>שלב ב — גימטריה</b><br/>
+        עכשיו חשבו את <b>הגימטריה הרגילה</b> של המילה שפענחתם (ד=4, ע=70, ת=400...).<br/>
+        זה המספר שפותח את השער.
+      </div>
+    `,
+    questionHtml: `מה המספר (הגימטריה הרגילה)?`,
+    hints: [
+      "בשלב א׳: 4=ד, 16=ע, 22=ת.",
+      "המילה שתקבלו היא מילה שמתקשרת ללשון ולידע.",
+      "בשלב ב׳: ד=4, ע=70, ת=400 — סכמו."
+    ],
+    validate: (v) => norm(v).replace(/\D/g,"") === "474",
+    teacherKey: "שלב א׳: דעת. שלב ב׳: ד(4)+ע(70)+ת(400)=474"
+  },
+
+  {
+    id: 8,
+    title: "שער 8 — השער האחרון (שם עצם + תואר)",
+    story: "כדי לצאת אתם צריכים לזהות צירופים של שם עצם + תואר מתוך טקסט, ואז לחלץ קוד אותיות.",
+    artifactHtml: `
+      <div class="content">
+        <b>מה עושים?</b><br/>
+        1) קראו את הטקסט.<br/>
+        2) מצאו לכל שם עצם ברשימה את <b>התואר</b> שלו.<br/>
+        3) קחו את <b>האות הראשונה של כל תואר</b> לפי סדר הרשימה — וזה הקוד.<br/><br/>
+
+        <div style="background: rgba(255,255,255,.78); border:1px solid rgba(33,60,60,.22); padding:12px; border-radius:14px; line-height:1.9;">
+          בלילה <b>שקט</b> כתבתי <b>מילים חדשות</b>.  
+          על <b>שולחן ישן</b> נח <b>ספר פתוח</b>.  
+          ב<b>חדר מואר</b> <b>חלום גדול</b> נולד —  
+          והעברית חזרה להיות <b>חיה</b>.<br/>
+          <span style="color:var(--muted)">מילים מסיחות: ים כחול, רכבת מהירה, תפוח אדום.</span>
+        </div>
+
+        <div style="margin-top:10px; color:var(--muted)">
+          <b>שמות עצם לחיפוש (לפי סדר):</b> לילה, מילים, שולחן, ספר, חדר, חלום
+        </div>
+
+        <div class="mini" style="margin-top:10px; color:var(--muted)">
+          דוגמה: 'לילה שקט' → תואר: שקט → האות הראשונה: ש׳
+        </div>
+      </div>
+    `,
+    questionHtml: `מה קוד האותיות (6 אותיות)?`,
+    hints: [
+      "חפשו בטקסט את הצירופים: לילה __, מילים __, שולחן __, ספר __, חדר __, חלום __.",
+      "התואר בדרך כלל אחרי שם העצם (למשל: 'ספר פתוח').",
+      "כתבו רק את האות הראשונה של כל תואר, לפי סדר הרשימה."
+    ],
+    validate: (v) => norm(v).replace(/\s+/g,"") === "שחיפמג",
+    teacherKey: "לילה שקט (ש), מילים חדשות (ח), שולחן ישן (י), ספר פתוח (פ), חדר מואר (מ), חלום גדול (ג) → קוד: שחיפמג"
+  },
+
+  {
+    id: 9,
+    title: "הכרזה הסופית",
+    story: "הצלחתם! כתב־היד נפתח והכרזה הגדולה מתגלה.",
+    artifactHtml: `
+      <div class="poster">
+        <div class="confetti">🎉✨🎉✨🎉</div>
+        <h1>כל הכבוד!</h1>
+        <div style="max-width:720px; margin:0 auto; color:var(--muted); line-height:1.8;">
+          פתרתם את כל השערים, פענחתם קודים, ודייקתם בשפת המקרא.<br/>
+          עכשיו הכרזה משתחררת…
+        </div>
+        <div class="quote">לָשׁוֹן חֲכָמִים תֵּיטִיב דָּעַת</div>
+        <div style="margin-top:12px; color:var(--muted)">משלי ט״ו, ב</div>
+        <div style="margin-top:18px;">
+          <button class="btn good" id="btnFinishRestart">לשחק שוב</button>
+        </div>
+      </div>
+    `,
+    questionHtml: `<b>סיימתם!</b>`,
+    hints: [],
+    validate: (v) => true,
+    teacherKey: "סיום"
+  }
+];
+
+/* Fix stage 3 validation/content to match teacher key */
+(function fixStage3(){
+  const s3 = STAGES.find(x=>x.id===3);
+  if(!s3) return;
+  // rewrite artifact and validation to consistent task
+  s3.artifactHtml = `
+    <div class="content">
+      <b>משימה</b><br/>
+      קראו את השיחה. בכל מקום שיש טעות בשם המספר — סמנו את המספר שבסוגריים.<br/>
+      בסוף תקבלו קוד של <b>4 ספרות</b> לפי הסדר שבו הן מופיעות.<br/><br/>
+      <div style="background: rgba(255,255,255,.75); border:1px solid rgba(19,33,60,.14); padding:12px; border-radius:14px; line-height:1.85;">
+        “שלחתי לך <b>שתי</b> ספרים (6) ומחר אביא עוד <b>שלושה</b> מחברות (1).<br/>
+        יש לי <b>חמש</b> עפרונות (9) וראיתי בכיתה <b>שני</b> בנות (4) מחכות.”
+      </div>
+      <div class="mini" style="margin-top:10px; color:var(--muted)">
+        רמז: “ספרים/עפרונות” = זכר; “מחברות/בנות” = נקבה.
+      </div>
+    </div>
+  `;
+  s3.validate = (v)=> norm(v).replace(/\D/g,"") === "6194";
+})();
+
+/* ===== state ===== */
+let idx = 0;
+let hintIndex = 0;
+let started = false;
+let secondsLeft = 30*60;
+let timerHandle = null;
+
+/* ===== dom ===== */
+const stageTitle = document.getElementById("stageTitle");
+const stageStory  = document.getElementById("stageStory");
+const artifact    = document.getElementById("artifact");
+const question    = document.getElementById("question");
+const answer      = document.getElementById("answer");
+const btnCheck    = document.getElementById("btnCheck");
+const btnHint     = document.getElementById("btnHint");
+const hintBox     = document.getElementById("hintBox");
+const statusEl    = document.getElementById("status");
+const progressBar = document.getElementById("progressBar");
+const progressText= document.getElementById("progressText");
+const timerEl     = document.getElementById("timer");
+
+const teacherOverlay = document.getElementById("teacherOverlay");
+const teacherBody    = document.getElementById("teacherBody");
+const btnTeacher     = document.getElementById("btnTeacher");
+const btnCloseTeacher= document.getElementById("btnCloseTeacher");
+const btnRestart     = document.getElementById("btnRestart");
+
+/* ===== functions ===== */
+function fmtTime(sec){
+  const m = Math.floor(sec/60).toString().padStart(2,"0");
+  const s = Math.floor(sec%60).toString().padStart(2,"0");
+  return `${m}:${s}`;
+}
+function startTimer(){
+  if(timerHandle) return;
+  timerHandle = setInterval(()=>{
+    if(!started) return;
+    secondsLeft = Math.max(0, secondsLeft-1);
+    timerEl.textContent = fmtTime(secondsLeft);
+    if(secondsLeft === 0){
+      statusEl.className="status no";
+      statusEl.textContent = "הזמן נגמר! אפשר להמשיך בכל זאת — אבל תבקשו מהמורה 'זמן נוסף'.";
+      clearInterval(timerHandle);
+      timerHandle = null;
+    }
+  }, 1000);
+}
+function setStage(newIdx){
+  idx = newIdx;
+  hintIndex = 0;
+  hintBox.style.display = "none";
+  hintBox.textContent = "";
+  statusEl.textContent = "";
+  statusEl.className = "status";
+  answer.value = "";
+  answer.focus();
+
+  const st = STAGES[idx];
+  stageTitle.textContent = st.title;
+  stageStory.textContent = st.story;
+  artifact.innerHTML = st.artifactHtml;
+  question.innerHTML = st.questionHtml;
+
+  // stage-specific hooks (e.g., multiple-choice code builders)
+  if (typeof st.afterRender === "function") {
+    try { st.afterRender(); } catch(e) { console.warn(e); }
+  }
+
+  const done = Math.max(0, idx-0);
+  const totalPlayable = 9; // 0..8 stages (9) then poster (9)
+  const pct = Math.min(100, Math.round((done/(totalPlayable))*100));
+  progressBar.style.width = pct + "%";
+  progressText.innerHTML = `
+    <div><b>שער:</b> ${Math.min(idx,8)} / 8</div>
+    <div><b>טיימר:</b> ${fmtTime(secondsLeft)}</div>
+    <div style="margin-top:8px; color:var(--muted)">טיפ: אם נתקעים – השתמשו ברמזים המדורגים.</div>
+  `;
+
+  // special: finish poster button
+  setTimeout(()=>{
+    const b = document.getElementById("btnFinishRestart");
+    if(b){
+      b.addEventListener("click", ()=>resetAll());
+    }
+  }, 50);
+}
+
+function showHint(){
+  const st = STAGES[idx];
+  if(!st.hints || st.hints.length===0){
+    hintBox.style.display = "block";
+    hintBox.textContent = "אין רמזים בשלב הזה 🙂";
+    return;
+  }
+  hintBox.style.display = "block";
+  const h = st.hints[Math.min(hintIndex, st.hints.length-1)];
+  hintBox.textContent = `רמז ${Math.min(hintIndex+1, st.hints.length)}: ` + h;
+  if(hintIndex < st.hints.length-1) hintIndex++;
+}
+
+function check(){
+  const st = STAGES[idx];
+  const v = answer.value;
+  const ok = !!st.validate(v);
+
+  if(idx === 0){ started = true; startTimer(); }
+
+  if(ok){
+    statusEl.className = "status ok";
+    statusEl.textContent = "נפתח! עוברים לשער הבא…";
+    setTimeout(()=>{
+      if(idx < STAGES.length-1){
+        setStage(idx+1);
+      }
+    }, 450);
+  }else{
+    statusEl.className = "status no";
+    statusEl.textContent = "לא נפתח עדיין. נסו שוב או לחצו “רמז”.";
+  }
+}
+
+function resetAll(){
+  started = false;
+  secondsLeft = 30*60;
+  timerEl.textContent = fmtTime(secondsLeft);
+  if(timerHandle){ clearInterval(timerHandle); timerHandle=null; }
+  setStage(0);
+}
+
+function openTeacher(){
+  const pwd = prompt("הזינו סיסמה למפתח למורה:");
+  if(pwd === null) return;
+  // password is not shown anywhere; we only compare hashes
+  const ok = hash32(norm(pwd)) === 2088324431;
+  if(!ok){
+    alert("סיסמה שגויה.");
+    return;
+  }
+  const lines = STAGES
+    .filter(s=>s.id>=1 && s.id<=8)
+    .map(s=>`<div style="margin-bottom:12px;"><b>${s.title}</b><br/><span style="color:var(--muted)">${s.teacherKey}</span></div>`)
+    .join("");
+  teacherBody.innerHTML = `
+    <div style="margin-bottom:10px; color:var(--muted)">כאן מופיעות התשובות/הקודים לכל השערים.</div>
+    ${lines}
+  `;
+  teacherOverlay.style.display="flex";
+}
+
+function closeTeacher(){ teacherOverlay.style.display="none"; }
+
+/* ===== events ===== */
+btnCheck.addEventListener("click", check);
+btnHint.addEventListener("click", showHint);
+answer.addEventListener("keydown",(e)=>{ if(e.key==="Enter") check(); });
+
+btnRestart.addEventListener("click", resetAll);
+
+btnTeacher.addEventListener("click", openTeacher);
+btnCloseTeacher.addEventListener("click", closeTeacher);
+teacherOverlay.addEventListener("click",(e)=>{ if(e.target===teacherOverlay) closeTeacher(); });
+
+/* init */
+resetAll();
+</script>
+</body>
+</html>
