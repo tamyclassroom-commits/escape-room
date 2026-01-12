@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>חדר בריחה – יום השפה העברית (שפת המקרא) – v12</title>
+<style>
+:root{
+  --bgA:#a1c4fd; --bgB:#c2e9fb; --bgC:#ffecd2; --bgD:#fcb69f;
+  --card:#ffffffee; --ink:#0f1b33; --muted:#3b4a66;
+  --pri:#6b5cff; --sec:#06b6d4; --ok:#16a34a; --warn:#ef4444;
+  --shadow:0 14px 36px rgba(0,0,0,.14); --r:20px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  background:
+    radial-gradient(1100px 620px at 12% 10%, var(--bgA), transparent 62%),
+    radial-gradient(900px 520px at 88% 14%, var(--bgD), transparent 56%),
+    radial-gradient(900px 520px at 12% 86%, var(--bgB), transparent 56%),
+    linear-gradient(135deg, var(--bgC), #fff 35%, #fff 65%, var(--bgD));
+}
+.wrap{max-width:980px;margin:0 auto;padding:18px 14px 42px}
+.card{
+  background:var(--card);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  border:1px solid rgba(15,27,51,.10);
+  overflow:hidden;
+}
+.header{
+  padding:18px 18px 12px;
+  background:linear-gradient(135deg, rgba(107,92,255,.18), rgba(6,182,212,.12), rgba(255,255,255,.65));
+}
+h1,h2{margin:0 0 8px}
+p{margin:0 0 10px; line-height:1.75; color:var(--muted)}
+.main{padding:16px 18px 20px}
+.badge{display:inline-flex;align-items:center;gap:8px;font-weight:800}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:999px;
+  background:rgba(107,92,255,.10);
+  border:1px solid rgba(107,92,255,.22);
+  font-weight:800;
+}
+.panel{
+  background:rgba(255,255,255,.70);
+  border:1px solid rgba(15,27,51,.12);
+  border-radius:16px;
+  padding:14px;
+  margin:12px 0;
+}
+.kicker{font-weight:900;margin:0 0 8px}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+.codebox{
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(15,27,51,.12);
+  border-radius:14px;
+  padding:12px;
+  line-height:1.85;
+}
+.grid{display:grid;gap:10px}
+@media (min-width:800px){.grid.cols2{grid-template-columns:1fr 1fr}}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+button{
+  border:0; cursor:pointer; font-weight:900;
+  padding:10px 14px; border-radius:999px;
+  background:var(--pri); color:white;
+  box-shadow:0 10px 22px rgba(107,92,255,.24);
+}
+button.secondary{background:var(--sec); box-shadow:0 10px 22px rgba(6,182,212,.22)}
+button.ghost{background:transparent;color:var(--pri);border:2px solid rgba(107,92,255,.35);box-shadow:none}
+button.danger{background:var(--warn); box-shadow:0 10px 22px rgba(239,68,68,.18)}
+small{color:var(--muted)}
+input[type="text"], input[type="number"]{
+  width:100%;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(15,27,51,.18);
+  outline:none;
+  font-size:16px;
+  background:rgba(255,255,255,.9);
+}
+input[type="text"]:focus, input[type="number"]:focus{border-color:rgba(107,92,255,.55);box-shadow:0 0 0 4px rgba(107,92,255,.12)}
+hr{border:none;border-top:1px solid rgba(15,27,51,.12);margin:14px 0}
+.hint{
+  display:none;
+  background:rgba(6,182,212,.10);
+  border:1px dashed rgba(6,182,212,.35);
+  border-radius:14px;
+  padding:10px 12px;
+  margin-top:8px;
+  color:#0b3a4a;
+}
+.notice{
+  background:rgba(22,163,74,.10);
+  border:1px solid rgba(22,163,74,.25);
+  border-radius:14px;
+  padding:10px 12px;
+  color:#14532d;
+}
+.err{
+  background:rgba(239,68,68,.10);
+  border:1px solid rgba(239,68,68,.24);
+  border-radius:14px;
+  padding:10px 12px;
+  color:#7f1d1d;
+  display:none;
+}
+.ok{
+  background:rgba(22,163,74,.10);
+  border:1px solid rgba(22,163,74,.25);
+  border-radius:14px;
+  padding:10px 12px;
+  color:#14532d;
+  display:none;
+}
+.list{margin:0;padding:0 18px}
+.list li{margin:6px 0}
+.choice{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:10px 12px;border:1px solid rgba(15,27,51,.12);
+  border-radius:14px;background:rgba(255,255,255,.72);
+}
+.choice input{margin-top:4px}
+.footerRow{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.timer{
+  font-weight:900;
+  background:rgba(255,255,255,.6);
+  border:1px solid rgba(15,27,51,.12);
+  border-radius:999px;
+  padding:8px 12px;
+}
+.poster{
+  text-align:center;
+  padding:26px 18px;
+  background:linear-gradient(135deg, rgba(255,255,255,.86), rgba(255,255,255,.55));
+  border-radius:26px;
+  border:4px solid rgba(107,92,255,.34);
+}
+.poster h2{font-size:36px;margin-bottom:12px}
+.poster .big{font-size:22px;color:var(--ink);font-weight:900;line-height:1.6}
+.spark{font-size:26px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" id="app">
+    <div class="header">
+      <div class="row" style="justify-content:space-between">
+        <div>
+          <h1>🗝️ חדר בריחה – יום השפה העברית</h1>
+          <p id="subtitle">שפת המקרא • פענוח • קודים • 8 שערים</p>
+        </div>
+        <div class="timer" id="timer">⏳ 30:00</div>
+      </div>
+      <div class="row">
+        <span class="pill" id="progressPill">שער 0/8</span>
+        <button class="ghost" id="hintBtn">רמז</button>
+        <button class="ghost" id="teacherBtn">מפתח למורה</button>
+      </div>
+    </div>
+
+    <div class="main" id="screen"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // ---------- helpers ----------
+  const $ = (sel) => document.querySelector(sel);
+  const norm = (s) => (s||"").toString().trim().replace(/\s+/g," ").replace(/[״"]/g,'"').replace(/[׳']/g,"'");
+  const onlyHebLetters = (s) => norm(s).replace(/[^א-ת]/g,"");
+  const show = (el) => { el.style.display = ""; };
+  const hide = (el) => { el.style.display = "none"; };
+  const setHTML = (el, html) => { el.innerHTML = html; };
+  const escapeHtml = (str) => (str||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+  // ---------- timer ----------
+  let remaining = 30 * 60; // seconds
+  let timerOn = false;
+  const timerEl = $("#timer");
+  const tick = () => {
+    if (!timerOn) return;
+    remaining = Math.max(0, remaining - 1);
+    const m = String(Math.floor(remaining/60)).padStart(2,"0");
+    const s = String(remaining%60).padStart(2,"0");
+    timerEl.textContent = `⏳ ${m}:${s}`;
+    if (remaining === 0) timerOn = false;
+  };
+  setInterval(tick, 1000);
+
+  // ---------- gates data ----------
+  // NOTE: Hints must not reveal exact answers.
+  const gates = [
+    {
+      id: "intro",
+      title: "ברוכים הבאים",
+      body: `
+        <div class="panel">
+          <div class="kicker">📜 סיפור המסגרת</div>
+          <p>בארכיון נמצא כתב־יד נעול. כדי לפתוח אותו צריך לעבור 8 שערים – כל שער הוא “מנעול לשוני”.</p>
+          <div class="notice"><b>איך משחקים:</b> פתרו את המשימה, הפיקו את הקוד, הקלידו אותו – ורק אז השער הבא ייפתח.</div>
+        </div>
+        <div class="panel">
+          <div class="kicker">✅ המלצה להפעלה בכיתה</div>
+          <ul class="list">
+            <li>עבודה בקבוצות של 3–5</li>
+            <li>כל קבוצה עם דף ועט</li>
+            <li>לוחצים “רמז” רק כשבאמת צריך</li>
+          </ul>
+        </div>
+      `,
+      input: null,
+      validate: null,
+      hints: [
+        "כאן אין קוד – זו רק התחלה 🙂"
+      ],
+      teacher: "אין"
+    },
+
+    // Gate 1
+    {
+      id:"g1",
+      title:"שער 1 — הגלובוס הכבול",
+      body: `
+        <div class="panel">
+          <div class="kicker">🧩 המשימה</div>
+          <p>התאימו כל קבוצת מילים לשפה/ארץ שממנה הגיעו המילים לעברית (מילים שאולות).</p>
+          <div class="codebox">
+            <b>קבוצה 1:</b> פיצה, ברוקולי, סלון, אקורדיון, פשטידה<br/>
+            <b>קבוצה 2:</b> אוטובוס, טלוויזיה, מגזין, קמפוס, לימוזינה<br/>
+            <b>קבוצה 3:</b> אטלס, אצטדיון, דולפין, מגנט, היסטוריה<br/>
+            <b>קבוצה 4:</b> פיג׳מה, בנדנה, בלגן, גזוז, ג׳חנון
+          </div>
+          <p class="small"><b>הקוד:</b> כתבו את 4 השמות לפי סדר 1–4, מופרדים בפסיקים.</p>
+        </div>
+
+        <div class="panel">
+          <label><b>הקוד שלך:</b></label>
+          <input id="answer" type="text" placeholder="לדוגמה: איטליה, צרפת, ..."/>
+          <div class="err" id="err">המנעול לא נפתח. נסו שוב.</div>
+          <div class="ok" id="ok">מצוין! השער נפתח.</div>
+        </div>
+      `,
+      hints:[
+        "קבוצה 3 קשורה למילים יווניות (מדע/ספורט).",
+        "קבוצה 1 מזוהה מאוד עם תרבות/מאכלים איטלקיים.",
+        "קבוצה 4 קשורה לשפות המזרח (פרס/איראן)."
+      ],
+      teacher:"תשובה מומלצת: איטליה, צרפת, יוון, פרס/איראן",
+      validate: (ans) => {
+        const a = norm(ans);
+        const ok1 = /איטל(י|יה)/.test(a);
+        const ok2 = /צרפת/.test(a);
+        const ok3 = /יוון/.test(a);
+        const ok4 = /(פרס|איראן)/.test(a);
+        return ok1 && ok2 && ok3 && ok4;
+      }
+    },
+
+    // Gate 2 (MCQ code)
+    {
+      id:"g2",
+      title:"שער 2 — שעון החול (אמריקאי)",
+      body: `
+        <div class="panel">
+          <div class="kicker">🧩 המשימה</div>
+          <p>בחרו את הפירוש הנכון לכל מילה. ליד כל אפשרות מופיעה ספרה — זו ספרת הקוד.</p>
+          <div class="grid cols2">
+            ${mcqBlock("אשתקד", "q1", [
+              ["בשנה שעברה", 7],
+              ["בעוד שנה", 2],
+              ["לפני שעה", 9],
+              ["מחר", 4],
+            ])}
+            ${mcqBlock("טרם", "q2", [
+              ["מיד", 6],
+              ["עדיין לא", 3],
+              ["לפעמים", 1],
+              ["בכל רגע", 8],
+            ])}
+            ${mcqBlock("לאלתר", "q3", [
+              ["לאט לאט", 2],
+              ["מדי פעם", 5],
+              ["מיד", 9],
+              ["בעוד מעט", 7],
+            ])}
+            ${mcqBlock("לעת עתה", "q4", [
+              ["כרגע", 4],
+              ["לפני שנים", 6],
+              ["מחר", 1],
+              ["תמיד", 8],
+            ])}
+          </div>
+          <hr/>
+          <div class="row" style="justify-content:space-between">
+            <div class="pill">הקוד שנבנה: <span class="mono" id="mcqCode">____</span></div>
+            <button class="secondary" id="fillMcqBtn" type="button">העתק קוד לשדה</button>
+          </div>
+          <small>כדי לפתוח את השער צריך קוד בן 4 ספרות.</small>
+        </div>
+
+        <div class="panel">
+          <label><b>הקוד שלך:</b></label>
+          <input id="answer" type="text" placeholder="4 ספרות..."/>
+          <div class="err" id="err">המנעול לא נפתח. בדקו בחירות.</div>
+          <div class="ok" id="ok">מצוין! השער נפתח.</div>
+        </div>
+      `,
+      hints:[
+        "אשתקד קשור ל‘שנה שעברה’.",
+        "טרם = משהו שעוד לא קרה.",
+        "לאלתר קשור לפעולה מיידית."
+      ],
+      teacher:"הקוד: 7394",
+      validate:(ans, ctx) => norm(ans) === ctx.mcqCode
+    },
+
+    // Gate 3: mixture of correct/incorrect; pick wrong lines digits -> code
+    {
+      id:"g3",
+      title:"שער 3 — הטלפון החוגה (שם המספר)",
+      body: `
+        <div class="panel">
+          <div class="kicker">🧩 המשימה</div>
+          <p>בתמליל השיחה יש משפטים תקינים ומשפטים שגויים.</p>
+          <p class="small"><b>יש בדיוק 4 משפטים שגויים.</b> מצאו אותם וכתבו את 4 הספרות של השגויים לפי הסדר (מלמעלה למטה) — זה הקוד.</p>
+          <div class="codebox">
+            (1) שלוש מחברות חדשות הגיעו היום.<br/>
+            (8) שלושה מחברות חדשות הגיעו היום.<br/>
+            (4) שני ילדים חיכו בחוץ.<br/>
+            (7) שתיים ילדים חיכו בחוץ.<br/>
+            (9) עשר דקות נותרו להפסקה.<br/>
+            (2) עשרה דקות נותרו להפסקה.<br/>
+            (6) שמונה תלמידות יצאו לטיול.<br/>
+            (3) שמונת תלמידות יצאו לטיול.
+          </div>
+          <small>אחרי שמצאתם — הקלידו את הקוד (4 ספרות).</small>
+        </div>
+
+        <div class="panel">
+          <label><b>הקוד שלך:</b></label>
+          <input id="answer" type="text" placeholder="4 ספרות..."/>
+          <div class="err" id="err">לא נפתח. כנראה סומנו משפטים שגויים לא נכונים.</div>
+          <div class="ok" id="ok">מצוין! השער נפתח.</div>
+        </div>
+      `,
+      hints:[
+        "בדקו התאמה בין שם המספר לבין מין/ריבוי של שם העצם (מחברות/ילדים/דקות/תלמידות).",
+        "‘מחברות’ נקבה • ‘ילדים’ זכר • ‘דקות’ נקבה • ‘תלמידות’ נקבה.",
+        "שימו לב: ‘שניים/שתיים’ וגם ‘שלוש/שלושה’ משתנים לפי מין."
+      ],
+      teacher:"השגויים: (8),(7),(2),(3) → קוד 8723",
+      validate:(ans)=> norm(ans) === "8723"
+    },
+
+    // Gate 4: mixed roots, hint family, code is root
+    {
+      id:"g4",
+      title:"שער 4 — תמונת המשפחה (שורש)",
+      body: `
+        <div class="panel">
+          <div class="kicker">🧩 המשימה</div>
+          <p>לפניכם מילים מעורבבות משורשים שונים. מצאו <b>6 מילים</b> ששייכות למשפחה אחת.</p>
+          <p class="small"><b>רמז למשפחה:</b> היא קשורה ל“לחיות / להחיות / תחייה / החייאה”.</p>
+          <div class="codebox">
+            חיים · חיטה · החייאה · מחייה · תחייה · חינוך · חיה · חייל · יחיה · חידוש · חובש · להחיות · חיכוך · חיוני · חומת · החיה
+          </div>
+          <p class="small"><b>הקוד:</b> אחרי שמצאתם את ה־6, כתבו את <b>השורש (3 אותיות)</b> בלי ניקוד ובלי רווחים.</p>
+        </div>
+
+        <div class="panel">
+          <label><b>הקוד שלך:</b></label>
+          <input id="answer" type="text" placeholder="3 אותיות..."/>
+          <div class="err" id="err">לא נפתח. בדקו שהשורש הוא של משפחת המילים הנכונה.</div>
+          <div class="ok" id="ok">מצוין! השער נפתח.</div>
+        </div>
+      `,
+      hints:[
+        "לא כל מילה שמתחילה בח׳ שייכת למשפחה.",
+        "התמקדו במילים עם משמעות של חיים/תחייה/להחיות.",
+        "השורש כאן הוא 3 אותיות, בלי ניקוד."
+      ],
+      teacher:"שורש: חיה",
+      validate:(ans)=> onlyHebLetters(ans) === "חיה"
+    },
+
+    // Gate 5: reorder phrase
+    {
+      id:"g5",
+      title:"שער 5 — התנ״ך מדבר (דיוק בביטוי)",
+      body: `
+        <div class="panel">
+          <div class="kicker">🧩 המשימה</div>
+          <p>המילים של הביטוי מוכרות – אבל הן התערבבו. סדרו למשפט המדויק.</p>
+          <div class="codebox mono">ביד · הלשון · ומוות · חיים</div>
+          <p class="small"><b>הקוד:</b> כתבו את המשפט השלם (בדיוק, בלי ניקוד).</p>
+        </div>
+
+        <div class="panel">
+          <label><b>הקוד שלך:</b></label>
+          <input id="answer" type="text" placeholder="הקלידו משפט..."/>
+          <div class="err" id="err">לא נפתח. בדקו סדר מילים וניסוח.</div>
+          <div class="ok" id="ok">מצוין! השער נפתח.</div>
+        </div>
+      `,
+      hints:[
+        "המבנה הוא: X ו־Y ביד הלשון.",
+        "זו אמירה על כוח הדיבור.",
+        "שימו לב: מתחיל ב‘חיים’."
+      ],
+      teacher:"חיים ומוות ביד הלשון",
+      validate:(ans)=> norm(ans) === "חיים ומוות ביד הלשון"
+    },
+
+    // Gate 6: no marking, selection creates code
+    {
+      id:"g6",
+      title:"שער 6 — הכרזה (חלץ מסר)",
+      body: `
+        <div class="panel">
+          <div class="kicker">🧩 המשימה</div>
+          <p>קראו את הטקסט הקצר (כרזה בסגנון “מלחמת השפות”) ובחרו את <b>3 המילים</b> שהכי מסכמות את המסר.</p>
+          <div class="codebox">
+            זהו רגע גורלי: אם הלימודים ייעשו בשפה זרה, תיפגע זהותנו. 
+            בתי הספר חייבים להכשיר דור עברי – כדי שהעברית תהיה שפת המדע, התרבות והחיים.
+          </div>
+          <p class="small">בחרו 3 מילים מהרשימה. ליד כל מילה יש ספרה — היא חלק מהקוד.</p>
+          <div class="grid cols2" id="posterChoices"></div>
+          <hr/>
+          <div class="pill">הקוד שנבנה: <span class="mono" id="posterCode">___</span></div>
+          <small>הקוד הוא 3 ספרות (לפי סדר הבחירה שלכם).</small>
+        </div>
+
+        <div class="panel">
+          <label><b>הקוד שלך:</b></label>
+          <input id="answer" type="text" placeholder="3 ספרות..."/>
+          <div class="err" id="err">לא נפתח. בחרו את 3 מילות המפתח של הכרזה.</div>
+          <div class="ok" id="ok">מצוין! השער נפתח.</div>
+        </div>
+      `,
+      hints:[
+        "בחרו מילים שמסכמות ‘שפה/זהות/בתי ספר’ ולא מילים כלליות כמו ‘רגע’.",
+        "חשבו: מה הדבר שהכרזה דורשת לעשות?",
+        "שתי מילים קשורות לעברית ועוד מילה קשורה לזהות/דור."
+      ],
+      teacher:"בחירה נכונה לדוגמה: עברית(4), זהות(7), בתי־הספר(1) → קוד 471",
+      validate:(ans, ctx)=> norm(ans) === ctx.posterCode
+    },
+
+    // Gate 7: cipher to word then gematria (not just sum given digits)
+    {
+      id:"g7",
+      title:"שער 7 — צופן כפול (פענוח + גימטריה)",
+      body: `
+        <div class="panel">
+          <div class="kicker">🧩 המשימה</div>
+          <p>על פתק כתוב: <span class="mono">“לשון חכמים תיטיב ___”</span>. את המילה החסרה מסתירים במספרים.</p>
+          <p class="small"><b>שלב א׳:</b> מספרים הם מספרי אותיות (א=1… ת=22). פענחו מילה בת 3 אותיות.</p>
+          <div class="codebox mono">4 – 16 – 22</div>
+          <p class="small"><b>שלב ב׳:</b> חשבו גימטריה רגילה למילה שפענחתם (א=1, ב=2… י=10, כ=20… ת=400).</p>
+          <p class="small"><b>הקוד:</b> מספר הגימטריה.</p>
+        </div>
+
+        <div class="panel">
+          <label><b>הקוד שלך:</b></label>
+          <input id="answer" type="text" placeholder="מספר..."/>
+          <div class="err" id="err">לא נפתח. בדקו את הפענוח ואז את הגימטריה.</div>
+          <div class="ok" id="ok">מצוין! השער נפתח.</div>
+        </div>
+      `,
+      hints:[
+        "16 היא האות פ׳ (מספר 16 בא״ב).",
+        "4 היא ד׳, 22 היא ת׳.",
+        "אחרי הפענוח (מילה) — עוברים לגימטריה של האותיות."
+      ],
+      teacher:"מילה: דעת → גימטריה 474",
+      validate:(ans)=> norm(ans) === "474"
+    },
+
+    // Gate 8: clear and working with embedded text and code word
+    {
+      id:"g8",
+      title:"שער 8 — הפטיפון (שם עצם + תואר)",
+      body: `
+        <div class="panel">
+          <div class="kicker">🧩 המשימה</div>
+          <p>מצאו בטקסט <b>5</b> צירופים של <b>שם עצם + תואר</b>. בכל צירוף קחו את <b>האות הראשונה של התואר</b>.</p>
+          <p class="small">סדרו את 5 האותיות לפי סדר הופעת הצירופים בטקסט — זו מילת הקוד (5 אותיות).</p>
+          <div class="codebox">
+            בחדר עומד <b>שולחן ישן</b>, ועליו <b>דף קרוע</b> ו<b>עט דק</b>.<br/>
+            על הקיר תלויה <b>כרזה גדולה</b>, ומתחתיה <b>מנורה קטנה</b> שמאירה על המילים.
+          </div>
+          <small>רק הצירופים המודגשים נחשבים — אבל התואר משתנה בכל צירוף. (אל תדלגו!)</small>
+        </div>
+
+        <div class="panel">
+          <label><b>מילת הקוד:</b></label>
+          <input id="answer" type="text" placeholder="5 אותיות..."/>
+          <div class="err" id="err">לא נפתח. ודאו שמצאתם 5 צירופים ולקחתם את האות הראשונה של התואר.</div>
+          <div class="ok" id="ok">מצוין! סיימתם את החדר!</div>
+        </div>
+      `,
+      hints:[
+        "שם עצם = מי/מה. תואר = איך/איזה.",
+        "קחו אות ראשונה רק מהתואר (ישן→י, קרוע→ק...).",
+        "נסו לכתוב את האותיות שלכם בטור לפי הסדר ואז לקרוא כמילה."
+      ],
+      teacher:"תארים: ישן, קרוע, דק, גדולה, קטנה → אותיות: י ק ד ג ק → קוד: יקדגק",
+      validate:(ans)=> onlyHebLetters(ans) === "יקדגק"
+    },
+
+    // Final poster
+    {
+      id:"done",
+      title:"🎉 הצלחתם!",
+      body: `
+        <div class="poster">
+          <div class="spark">✨📜✨</div>
+          <h2>כתב־היד נפתח!</h2>
+          <div class="big">“<b>לָשׁוֹן חֲכָמִים תֵּיטִיב דָּעַת</b>”</div>
+          <p class="big">שמרתם על השפה, פענחתם קודים – ועכשיו אתם “שומרי הלשון”!</p>
+          <div class="spark">🎉🎈🎊</div>
+        </div>
+        <div class="btns" style="justify-content:center;margin-top:14px">
+          <button class="ghost" id="restartBtn">התחלה מחדש</button>
+        </div>
+      `,
+      input:null,
+      validate:null,
+      hints:["כל הכבוד!"],
+      teacher:"—"
+    }
+  ];
+
+  // MCQ builder
+  function mcqBlock(title, name, options){
+    const opts = options.map(([label, digit], idx) => `
+      <label class="choice">
+        <input type="radio" name="${name}" value="${digit}">
+        <div>
+          <div><b>${escapeHtml(label)}</b> <span class="mono">(${digit})</span></div>
+        </div>
+      </label>
+    `).join("");
+    return `
+      <div class="panel">
+        <div class="kicker">${escapeHtml(title)}</div>
+        <div class="grid">${opts}</div>
+      </div>
+    `;
+  }
+
+  // poster choices for gate 6
+  const posterWords = [
+    ["בתי־הספר", 1],
+    ["מדע", 2],
+    ["הפסקה", 9],
+    ["עברית", 4],
+    ["זהות", 7],
+    ["מסדרון", 6],
+    ["דור", 5],
+    ["כדורסל", 8],
+    ["שפה", 3],
+    ["ממתק", 0],
+  ];
+
+  // state
+  let gateIndex = 0; // 0 = intro
+  let hintIndex = 0;
+  const screen = $("#screen");
+  const progressPill = $("#progressPill");
+  const hintBtn = $("#hintBtn");
+  const teacherBtn = $("#teacherBtn");
+  const subtitle = $("#subtitle");
+
+  // dynamic context
+  const ctx = {
+    mcqCode: "7394",
+    posterCode: "" // built from selections
+  };
+
+  function render(){
+    const gate = gates[gateIndex];
+    hintIndex = 0;
+    progressPill.textContent = gateIndex===0 ? "שער 0/8" : `שער ${gateIndex}/8`;
+    subtitle.textContent = gateIndex===0 ? "שפת המקרא • פענוח • קודים • 8 שערים" : gate.title;
+    setHTML(screen, `
+      <h2>${escapeHtml(gate.title)}</h2>
+      ${gate.body}
+      <div class="hint" id="hintBox"></div>
+    `);
+
+    // intro: start button
+    if (gate.id === "intro"){
+      const btns = document.createElement("div");
+      btns.className = "btns";
+      btns.innerHTML = `<button class="secondary" id="startBtn">מתחילים →</button>`;
+      screen.appendChild(btns);
+      $("#startBtn").onclick = () => { timerOn = true; goTo(1); };
+    }
+
+    // done restart
+    if (gate.id === "done"){
+      $("#restartBtn").onclick = () => { remaining = 30*60; timerOn=false; timerEl.textContent="⏳ 30:00"; goTo(0); };
+    }
+
+    // Special: gate2 MCQ code builder
+    if (gate.id === "g2"){
+      wireMcq();
+    }
+
+    // Special: gate6 poster choices builder
+    if (gate.id === "g6"){
+      wirePoster();
+    }
+
+    // Generic: validate input if exists
+    if ($("#answer") && gate.validate){
+      $("#answer").addEventListener("keydown", (e)=>{ if(e.key==="Enter"){ e.preventDefault(); tryUnlock(); }});
+      // add unlock button
+      const btns = document.createElement("div");
+      btns.className = "btns";
+      btns.innerHTML = `<button class="secondary" id="unlockBtn">פתח שער</button>`;
+      screen.appendChild(btns);
+      $("#unlockBtn").onclick = tryUnlock;
+    }
+
+    // Reset hint box
+    hide($("#err")||{style:{}});
+    hide($("#ok")||{style:{}});
+    hide($("#hintBox")||{style:{}});
+  }
+
+  function goTo(idx){
+    gateIndex = Math.max(0, Math.min(gates.length-1, idx));
+    render();
+  }
+
+  function showErr(msg){
+    const e = $("#err");
+    if (!e) return;
+    e.textContent = msg || e.textContent || "לא נפתח.";
+    show(e);
+  }
+  function showOk(msg){
+    const o = $("#ok");
+    if (!o) return;
+    o.textContent = msg || o.textContent || "נפתח!";
+    show(o);
+  }
+
+  function tryUnlock(){
+    const gate = gates[gateIndex];
+    const ansEl = $("#answer");
+    const ans = ansEl ? ansEl.value : "";
+    hide($("#err")||{style:{}});
+    hide($("#ok")||{style:{}});
+    let ok = false;
+    try { ok = gate.validate(ans, ctx); } catch(e){ ok = false; }
+    if (!ok){
+      showErr();
+      return;
+    }
+    showOk();
+    setTimeout(() => {
+      if (gateIndex < 8) goTo(gateIndex+1);
+      else goTo(gates.length-1);
+    }, 450);
+  }
+
+  function wireMcq(){
+    const codeSpan = $("#mcqCode");
+    const fillBtn = $("#fillMcqBtn");
+    const recompute = () => {
+      const digits = ["q1","q2","q3","q4"].map(q=>{
+        const el = document.querySelector(`input[name="${q}"]:checked`);
+        return el ? el.value : "_";
+      }).join("");
+      codeSpan.textContent = digits;
+      ctx.mcqCode = digits;
+      return digits;
+    };
+    document.querySelectorAll('input[type="radio"]').forEach(r=> r.addEventListener("change", recompute));
+    fillBtn.onclick = () => { const d = recompute(); $("#answer").value = d; };
+    recompute();
+  }
+
+  function wirePoster(){
+    const holder = $("#posterChoices");
+    const codeSpan = $("#posterCode");
+    holder.innerHTML = "";
+    ctx.posterCode = "";
+    let selected = [];
+    posterWords.forEach(([w,d])=>{
+      const id = `pw_${d}_${w.replace(/[^א-ת]/g,"")}`;
+      const div = document.createElement("label");
+      div.className = "choice";
+      div.innerHTML = `
+        <input type="checkbox" value="${d}" data-word="${escapeHtml(w)}" id="${id}">
+        <div><b>${escapeHtml(w)}</b> <span class="mono">(${d})</span></div>
+      `;
+      holder.appendChild(div);
+    });
+    const update = () => {
+      const checks = Array.from(holder.querySelectorAll('input[type="checkbox"]:checked'));
+      // keep order of selection
+      selected = selected.filter(v => checks.some(c => c.value === v));
+      checks.forEach(c => { if (!selected.includes(c.value)) selected.push(c.value); });
+      // limit to 3
+      if (checks.length > 3){
+        // uncheck the last one
+        const last = selected[selected.length-1];
+        const toUn = checks.find(c => c.value === last);
+        if (toUn) toUn.checked = false;
+        selected = selected.slice(0,3);
+      }
+      ctx.posterCode = selected.join("");
+      codeSpan.textContent = ctx.posterCode || "___";
+    };
+    holder.addEventListener("change", update);
+    update();
+    // validate expects specific 3 chosen words: עברית(4), זהות(7), בתי־הספר(1) in any selection order? We'll accept any order by normalizing.
+    gates[gateIndex].validate = (ans, ctx2) => {
+      const a = norm(ans);
+      // accept either code digits or words typed
+      if (/^\d{3}$/.test(a)){
+        const s = a.split("").sort().join("");
+        return s === "147";
+      }
+      // if typed words:
+      return /עברית/.test(a) && /זהות/.test(a) && /(בתי.?הספר)/.test(a);
+    };
+  }
+
+  // Hints
+  hintBtn.onclick = () => {
+    const gate = gates[gateIndex];
+    const box = $("#hintBox");
+    if (!gate.hints || gate.hints.length === 0) return;
+    const idx = Math.min(hintIndex, gate.hints.length-1);
+    box.innerHTML = `<b>רמז ${idx+1}:</b> ${escapeHtml(gate.hints[idx])}`;
+    show(box);
+    hintIndex = Math.min(gate.hints.length, hintIndex + 1);
+  };
+
+  // Teacher key
+  teacherBtn.onclick = () => {
+    const pass = prompt("סיסמה למורה:");
+    if (pass === null) return;
+    // password not displayed anywhere else
+    const ok = norm(pass) === "tami2026";
+    if (!ok){
+      alert("סיסמה שגויה.");
+      return;
+    }
+    // build teacher view
+    const items = gates.map((g, idx) => {
+      if (g.id==="intro" || g.id==="done") return "";
+      return `<li><b>שער ${idx}:</b> ${escapeHtml(g.title.replace(/^שער \d+ — /,""))}<br/><small>${escapeHtml(g.teacher||"")}</small></li>`;
+    }).join("");
+    const html = `
+      <div class="panel">
+        <div class="kicker">🔑 מפתח למורה (תשובות)</div>
+        <ol class="list">${items}</ol>
+        <p class="small">אפשר לשנות קודים לפי הצורך – זה כלי עבודה.</p>
+      </div>
+      <div class="btns">
+        <button class="secondary" id="backBtn" type="button">חזרה לחדר</button>
+      </div>
+    `;
+    setHTML(screen, `<h2>מפתח למורה</h2>${html}`);
+    $("#backBtn").onclick = render;
+  };
+
+  // init
+  render();
+})();
+</script>
+</body>
+</html>
